@@ -25,7 +25,11 @@ const server = createServer(app);
 // Setup socket.io
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://chatting-app-2-inyd.onrender.com"
+    ],
+    credentials: true,
   },
 });
 
