@@ -7,8 +7,10 @@ import ChatWindow from "../components/ChatWindow.jsx";
 import { useNavigate } from "react-router-dom";
 
 const socket = io(import.meta.env.VITE_API_URL, {
+  transports: ["websocket"],
   withCredentials: true,
 });
+
 
 export default function Chat() {
   const { user, logout } = useContext(AuthContext);   // ⬅ logout access
