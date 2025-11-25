@@ -3,58 +3,48 @@ import { useState } from "react";
 export default function ChatWindow({ messages, selectedUser, sendMessage }) {
   const [text, setText] = useState("");
 
-  const send = () => {
-    sendMessage(text);
-    setText("");
-  };
-
   return (
-    <div className="flex-1 flex flex-col">
-      
-      {/* Header */}
-      <div className="bg-white shadow p-4 border-b">
-        <h2 className="font-bold text-lg text-gray-900">
-          {selectedUser ? selectedUser.name : "Select a user"}
-        </h2>
+    <div className="flex flex-col h-full bg-gray-100">
+
+      <div className="p-4 bg-white border-b font-bold">
+        {selectedUser ? selectedUser.username : "Select a user"}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-2">
-        {!selectedUser ? (
-          <p className="text-center text-gray-500">Start chatting...</p>
-        ) : (
-          messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`p-2 rounded-lg w-fit ${
-                msg.self
-                  ? "bg-blue-600 text-white ml-auto"
-                  : "bg-gray-300"
-              }`}
-            >
-              {msg.text}
-            </div>
-          ))
-        )}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={`p-2 rounded-lg max-w-xs ${
+              m.self
+                ? "ml-auto bg-green-200"
+                : "mr-auto bg-white"
+            }`}
+          >
+            {m.text}
+          </div>
+        ))}
       </div>
 
-      {/* Input box */}
       {selectedUser && (
-        <div className="p-4 bg-white border-t flex gap-2">
+        <div className="p-3 flex gap-2 bg-white border-t">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Write a message..."
-            className="flex-1 border p-2 rounded-lg text-black"
+            className="flex-1 p-2 border rounded-lg"
+            placeholder="Type a message..."
           />
           <button
-            onClick={send}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            onClick={() => {
+              sendMessage(text);
+              setText("");
+            }}
+            className="px-4 bg-blue-600 text-white rounded-lg"
           >
             Send
           </button>
         </div>
       )}
+
     </div>
   );
 }
