@@ -29,9 +29,13 @@ const io = new Server(server, {
       "http://localhost:5173",
       "https://chatting-app-2-inyd.onrender.com"
     ],
+    methods: ["GET", "POST"],
     credentials: true,
-  },
+    allowedHeaders: ["Content-Type"],
+    transports: ["websocket"],
+  }
 });
+
 
 // Store online users
 let onlineUsers = {};

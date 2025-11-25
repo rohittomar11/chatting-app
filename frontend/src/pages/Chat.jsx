@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const socket = io(import.meta.env.VITE_API_URL, {
   transports: ["websocket"],
+  upgrade: false,
   withCredentials: true,
 });
 
