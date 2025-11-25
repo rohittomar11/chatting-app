@@ -6,7 +6,7 @@ export default function ChatWindow({ messages, selectedUser, sendMessage }) {
   return (
     <div className="flex flex-col h-full bg-gray-100">
 
-      <div className="p-4 bg-white border-b font-bold">
+      <div className="p-4 bg-white border-b font-bold text-gray-900">
         {selectedUser ? selectedUser.username : "Select a user"}
       </div>
 
@@ -14,7 +14,7 @@ export default function ChatWindow({ messages, selectedUser, sendMessage }) {
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`p-2 rounded-lg max-w-xs ${
+            className={`p-2 rounded-lg max-w-xs font-bold text-gray-900 ${
               m.self
                 ? "ml-auto bg-green-200"
                 : "mr-auto bg-white"

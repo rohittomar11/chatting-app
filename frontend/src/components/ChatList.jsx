@@ -13,7 +13,7 @@ export default function ChatList({ users, selectedUser, openChat }) {
               ${selectedUser?._id === u._id ? "bg-gray-200" : "hover:bg-gray-100"}
             `}
           >
-            {u.username}
+            <span className="font-bold text-gray-900">{u.username}</span>
           </div>
         ))}
       </div>
