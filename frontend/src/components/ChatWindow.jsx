@@ -26,7 +26,8 @@ export default function ChatWindow({ messages, selectedUser, sendMessage }) {
       </div>
 
       {selectedUser && (
-        <div className="p-3 flex gap-2 bg-white border-t">
+        <div className="p-3 flex gap-2 bg-white border-t text-black">
+
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}

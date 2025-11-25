@@ -2,7 +2,8 @@ export default function ChatList({ users, selectedUser, openChat }) {
   return (
     <div className="h-full flex flex-col bg-white">
 
-      <h2 className="p-4 font-bold text-lg border-b">Users</h2>
+      <h2 className="p-4 font-bold text-lg border-b text-black">Users</h2>
+
 
       <div className="flex-1 overflow-y-auto">
         {users.map((u) => (
