@@ -83,7 +83,7 @@ export default function Chat() {
 
       {/* 🔥 Header */}
       <div className="p-4 bg-white shadow-md flex justify-between items-center">
-        <h1 className="text-xl font-bold">Chat Application</h1>
+       <h1 className="text-xl font-bold text-black">Chat Application</h1>
 
         <div className="flex items-center gap-3">
           {/* Mobile menu toggle */}
