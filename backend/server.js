@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import User from "./models/User.js"; // ⭐ IMPORTANT: Add this
 
 // Routes
 import authRoutes from "./routes/authRoutes.js";
@@ -19,7 +20,7 @@ app.use(cors());
 // Database connection
 connectDB();
 
-// Create server for socket.io
+// Create server
 const server = createServer(app);
 
 // Setup socket.io
@@ -36,18 +37,34 @@ const io = new Server(server, {
   }
 });
 
-
 // Store online users
 let onlineUsers = {};
 
-// Socket.io connection
+// SOCKET CONNECTION
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  // Save userId with socketId
-  socket.on("addUser", (userId) => {
+  // ⬆️ When frontend sends userId after login
+  socket.on("addUser", async (userId) => {
+    if (!userId) return;
+
     onlineUsers[userId] = socket.id;
     console.log("Online Users:", onlineUsers);
+
+    // Mark user online in DB
+    try {
+      await User.findByIdAndUpdate(userId, {
+        isOnline: true,
+      });
+
+      // Notify all users
+      io.emit("user-status-change", {
+        userId,
+        isOnline: true,
+      });
+    } catch (err) {
+      console.log("Error setting user online:", err);
+    }
   });
 
   // SEND MESSAGE
@@ -62,15 +79,35 @@ io.on("connection", (socket) => {
     }
   });
 
-  // User disconnected
-  socket.on("disconnect", () => {
+  // USER DISCONNECTED
+  socket.on("disconnect", async () => {
     console.log("User disconnected:", socket.id);
 
-    // Remove user from onlineUsers
-    for (let userId in onlineUsers) {
-      if (onlineUsers[userId] === socket.id) {
-        delete onlineUsers[userId];
+    let userId = null;
+
+    // Find which user disconnected
+    for (let id in onlineUsers) {
+      if (onlineUsers[id] === socket.id) {
+        userId = id;
+        delete onlineUsers[id];
         break;
+      }
+    }
+
+    if (userId) {
+      try {
+        await User.findByIdAndUpdate(userId, {
+          isOnline: false,
+          lastSeen: new Date(),
+        });
+
+        io.emit("user-status-change", {
+          userId,
+          isOnline: false,
+          lastSeen: new Date(),
+        });
+      } catch (err) {
+        console.log("Error updating lastSeen:", err);
       }
     }
   });
@@ -85,7 +122,7 @@ app.get("/", (req, res) => {
   res.send("Chat App Backend Running with Socket.io");
 });
 
-// Start server
+// Start Server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

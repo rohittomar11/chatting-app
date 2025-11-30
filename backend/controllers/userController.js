@@ -5,7 +5,8 @@ export const getAllUsers = async (req, res) => {
     const loggedUserId = req.user.id; // coming from auth middleware
 
     const users = await User.find({ _id: { $ne: loggedUserId } }).select(
-      "-password"
+      "username email isOnline lastSeen"
+      
     );
 
     return res.status(200).json({

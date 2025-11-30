@@ -28,14 +28,20 @@ export default function Chat() {
     navigate("/login");
   };
 
+  // ⭐ FIXED: send correct user ID to socket
   useEffect(() => {
-    socket.emit("addUser", user.userId);
-  }, []);
+    if (user && user.userId) {
+      console.log("Sending userID to socket:", user.userId);
+      socket.emit("addUser", user.userId);
+    }
+  }, [user]);
 
+  // Fetch all users
   useEffect(() => {
     api.get("/users/all").then((res) => setUsers(res.data.data));
   }, []);
 
+  // Load messages when user is selected
   const loadMessages = async (receiver) => {
     setSelectedUser(receiver);
     setIsSidebarOpen(false); // close sidebar on mobile
@@ -50,6 +56,7 @@ export default function Chat() {
     setMessages(formatted);
   };
 
+  // Listen for incoming messages
   useEffect(() => {
     socket.on("receiveMessage", ({ senderId, message }) => {
       if (senderId === selectedUser?._id) {
@@ -60,17 +67,20 @@ export default function Chat() {
     return () => socket.off("receiveMessage");
   }, [selectedUser]);
 
+  // Send message
   const sendMessage = async (text) => {
     if (!text || !selectedUser) return;
 
+    // Send through socket
     socket.emit("sendMessage", {
-      senderId: user.userId,
+      senderId: user.userId,         // FIXED
       receiverId: selectedUser._id,
       message: text,
     });
 
+    // Save in DB
     await api.post("/messages/send", {
-      senderId: user.userId,
+      senderId: user.userId,         // FIXED
       receiverId: selectedUser._id,
       message: text,
     });
@@ -83,7 +93,7 @@ export default function Chat() {
 
       {/* 🔥 Header */}
       <div className="p-4 bg-white shadow-md flex justify-between items-center">
-       <h1 className="text-xl font-bold text-black">Chat Application</h1>
+        <h1 className="text-xl font-bold text-black">Chat Application</h1>
 
         <div className="flex items-center gap-3">
           {/* Mobile menu toggle */}
@@ -106,7 +116,7 @@ export default function Chat() {
       {/* 🔥 MAIN CHAT AREA */}
       <div className="flex flex-1 relative overflow-hidden">
 
-        {/* 🔥 Sidebar (Chat List) — responsive */}
+        {/* 🔥 Sidebar (Chat List) */}
         <div
           className={`
             fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform 
